@@ -1,4 +1,4 @@
-package racingcar;
+package racingcar.entity;
 
 public class Car {
     private final String name;
