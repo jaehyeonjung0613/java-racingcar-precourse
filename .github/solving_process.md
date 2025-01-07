@@ -152,3 +152,176 @@ public class Car {
 ```
 
 작동(move or idle) 구현.
+
+## 3. Car 유효성 체크
+
+```java
+// CarConstants.java
+
+package racingcar.entity;
+
+public final class CarConstants {
+    private CarConstants() {
+    }
+
+    public static final int MAX_NAME_LENGTH = 5;
+
+    public static final String EMPTY_NAME_INPUT_MESSAGE = "자동차 이름은 필수 입력입니다.";
+    public static final String NAME_LENGTH_OVER_FORMAT = "자동차 이름은 최대 %d 자 이하만 지정 가능합니다.";
+    public static final String SEED_RANGE_OVER_FORMAT = "자동차 작동 시드는 %d ~ %d 범위 이여야만 합니다.";
+}
+```
+
+유효성 관련 상수 정의.
+
+### 자동차 이름이 미입력 된 경우
+
+```java
+// CarTest.java
+
+package racingcar.entity;
+
+import static org.assertj.core.api.Assertions.*;
+import static racingcar.entity.CarConstants.*;
+
+import org.junit.jupiter.api.Test;
+
+public class CarTest {
+    @Test
+    void 자동차_이름_미입력() {
+        assertThatThrownBy(() -> new Car(null)).isEqualTo(IllegalArgumentException.class)
+            .hasMessage(EMPTY_NAME_INPUT_MESSAGE);
+    }
+}
+```
+
+테스트 케이스 생성.
+
+```java
+// Car.java
+
+package racingcar.entity;
+
+import static racingcar.entity.CarConstants.*;
+
+public class Car {
+    public Car(String name) throws IllegalArgumentException {
+        validateName(name);
+        this.name = name;
+    }
+
+    private void validateName(String name) throws IllegalArgumentException {
+        if (name == null) {
+            throw new IllegalArgumentException(EMPTY_NAME_INPUT_MESSAGE);
+        }
+    }
+}
+```
+
+자동차 이름 저장시 null 체크.
+
+### 자동차 이름 초과일 경우
+
+```java
+// CarTest.java
+
+package racingcar.entity;
+
+import static org.assertj.core.api.Assertions.*;
+import static racingcar.entity.CarConstants.*;
+
+import org.junit.jupiter.api.Test;
+
+public class CarTest {
+    @Test
+    void 자동차_이름_초과() {
+        String message = String.format(NAME_LENGTH_OVER_FORMAT, MAX_NAME_LENGTH);
+        assertThatThrownBy(() -> new Car("invalid name")).isInstanceOf(IllegalArgumentException.class)
+            .hasMessage(message);
+    }
+}
+```
+
+테스트 케이스 생성.
+
+```java
+// Car.java
+
+package racingcar.entity;
+
+import static racingcar.entity.CarConstants.*;
+
+public class Car {
+    private void validateName(String name) throws IllegalArgumentException {
+        if (name == null) {
+            throw new IllegalArgumentException(EMPTY_NAME_INPUT_MESSAGE);
+        }
+        if (name.length() > MAX_NAME_LENGTH) {
+            throw new IllegalArgumentException(String.format(NAME_LENGTH_OVER_FORMAT, MAX_NAME_LENGTH));
+        }
+    }
+}
+```
+
+자동차 이름 저장시 이름 초과 유무 체크.
+
+### 자동차 작동 시드 초과일 경우
+
+```java
+// CarTest.java
+
+package racingcar.entity;
+
+import static org.assertj.core.api.Assertions.*;
+import static racingcar.entity.CarConstants.*;
+
+import org.junit.jupiter.api.Test;
+
+public class CarTest {
+    @Test
+    void 자동차_작동_시드_초과1() {
+        Car car = new Car("test");
+        String message = String.format(SEED_RANGE_OVER_FORMAT, MIN_OPERATION_SEED, MAX_OPERATION_SEED);
+        assertThatThrownBy(() -> car.operate(MIN_OPERATION_SEED - 1)).isInstanceOf(IllegalArgumentException.class)
+            .hasMessage(message);
+    }
+
+    @Test
+    void 자동차_작동_시드_초과2() {
+        Car car = new Car("test");
+        String message = String.format(SEED_RANGE_OVER_FORMAT, MIN_OPERATION_SEED, MAX_OPERATION_SEED);
+        assertThatThrownBy(() -> car.operate(MAX_OPERATION_SEED + 1)).isInstanceOf(IllegalArgumentException.class)
+            .hasMessage(message);
+    }
+}
+```
+
+테스트 케이스 생성.
+
+```java
+// Car.java
+
+package racingcar.entity;
+
+import static racingcar.entity.CarConstants.*;
+
+public class Car {
+    public void operate(int seed) throws IllegalArgumentException {
+        this.validateSeed(seed);
+        if (seed >= MIN_MOVEMENT_SEED) {
+            this.move();
+        }
+    }
+
+    private void validateSeed(int seed) throws IllegalArgumentException {
+        if (seed < MIN_OPERATION_SEED || seed > MAX_OPERATION_SEED) {
+            throw new IllegalArgumentException(
+                String.format(SEED_RANGE_OVER_FORMAT, MIN_OPERATION_SEED, MAX_OPERATION_SEED));
+        }
+    }
+}
+```
+
+자동차 작동시 시드 범위 체크.
+
+
