@@ -1,5 +1,7 @@
 package racingcar.entity;
 
+import static racingcar.entity.CarConstants.*;
+
 public class Car {
     private final String name;
     private int position = 0;
@@ -14,5 +16,15 @@ public class Car {
 
     public int getPosition() {
         return position;
+    }
+
+    public void operate(int seed) {
+        if (seed >= MIN_MOVEMENT_SEED) {
+            this.move();
+        }
+    }
+
+    private void move() {
+        this.position++;
     }
 }
