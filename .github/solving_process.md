@@ -83,3 +83,72 @@ public class Car {
 
 이름, 위치 저장 및 반환 구현.
 
+## 2. Car 작동(move or idle)
+
+```java
+// CarConstants.java
+
+package racingcar.entity;
+
+public final class CarConstants {
+    private CarConstants() {
+    }
+
+    public static final int MIN_OPERATION_SEED = 0;
+    public static final int MAX_OPERATION_SEED = 9;
+    public static final int MIN_MOVEMENT_SEED = 4;
+}
+```
+
+작동 관련 상수 정의.
+
+```java
+// CarTest.java
+
+package racingcar.entity;
+
+import static org.assertj.core.api.Assertions.*;
+import static racingcar.entity.CarConstants.*;
+
+import org.junit.jupiter.api.Test;
+
+public class CarTest {
+    @Test
+    void 작동_move() {
+        Car car = new Car("test");
+        car.operate(MIN_MOVEMENT_SEED);
+        assertThat(car.getPosition()).isEqualTo(1);
+    }
+
+    @Test
+    void 작동_idle() {
+        Car car = new Car("test");
+        car.operate(MIN_MOVEMENT_SEED - 1);
+        assertThat(car.getPosition()).isEqualTo(0);
+    }
+}
+```
+
+테스트 케이스 생성.
+
+```java
+// Car.java
+
+package racingcar.entity;
+
+import static racingcar.entity.CarConstants.*;
+
+public class Car {
+    public void operate(int seed) {
+        if (seed >= MIN_MOVEMENT_SEED) {
+            this.move();
+        }
+    }
+
+    private void move() {
+        this.position++;
+    }
+}
+```
+
+작동(move or idle) 구현.
