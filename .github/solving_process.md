@@ -324,4 +324,71 @@ public class Car {
 
 자동차 작동시 시드 범위 체크.
 
+## 4. Board Car 표시
 
+```java
+// BoardConstants.java
+
+package racingcar.entity;
+
+public final class BoardConstants {
+    private BoardConstants() {
+    }
+
+    public static final String DIST_SIGN = "-";
+    public static final String CAR_DISPLAY_FORMAT = "%s : %s";
+}
+```
+
+Car 표시 관련 상수 정의.
+
+```java
+// BoardTest.java
+
+package racingcar.entity;
+
+import static org.assertj.core.api.Assertions.*;
+import static racingcar.entity.BoardConstants.*;
+
+import org.junit.jupiter.api.Test;
+
+public class BoardTest {
+    @Test
+    void Car_표시() {
+        String name = "test";
+        String result = String.format(CAR_DISPLAY_FORMAT, name, DIST_SIGN);
+
+        Board board = new Board();
+        Car car = new Car(name);
+        car.operate(CarConstants.MIN_MOVEMENT_SEED);
+        assertThat(board.displayCar(car)).isEqualTo(result);
+    }
+}
+```
+
+테스트 케이스 생성.
+
+```java
+// Board.java
+
+package racingcar.entity;
+
+import static racingcar.entity.BoardConstants.*;
+
+public class Board {
+    public String displayCar(Car car) {
+        String distSign = this.getDistSign(car.getPosition());
+        return String.format(CAR_DISPLAY_FORMAT, car.getName(), distSign);
+    }
+
+    private String getDistSign(int position) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < position; i++) {
+            builder.append(DIST_SIGN);
+        }
+        return builder.toString();
+    }
+}
+```
+
+Car 표시 구현.
