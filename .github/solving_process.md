@@ -454,7 +454,7 @@ public class Board {
     private final Map<Integer, List<String>> record = new HashMap<>();
 
     private int round = 0;
-    
+
     public void update(List<Car> carList) {
         int maxDist = carList.stream().mapToInt(Car::getPosition).max().getAsInt();
         List<String> winnerList = carList.stream()
@@ -473,3 +473,213 @@ public class Board {
 
 라운드별 우승자 저장 및 반환 구현.
 
+## 6. Board 유효성 체크
+
+```java
+// BoardConstants.java
+
+package racingcar.entity;
+
+public final class BoardConstants {
+    private BoardConstants() {
+    }
+
+    public static final String EMPTY_CAR_MESSAGE = "자동차가 존재하지 않습니다.";
+    public static final String EMPTY_CAR_LIST_MESSAGE = "자동차 목록이 존재하지 않습니다.";
+    public static final String NOT_PROGRESS_ROUND_MESSAGE = "아직 미진행된 라운드입니다.";
+}
+```
+
+유효성 관련 상수 정의.
+
+### 자동차 표시시 미존재일 경우
+
+```java
+// BoardTest.java
+
+package racingcar.entity;
+
+import static org.assertj.core.api.Assertions.*;
+import static racingcar.entity.BoardConstants.*;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+
+public class BoardTest {
+    @Test
+    void 자동차_표시시_미존재() {
+        Board board = new Board();
+        assertThatThrownBy(() -> board.displayCar(null)).isInstanceOf(IllegalArgumentException.class)
+            .hasMessage(EMPTY_CAR_MESSAGE);
+    }
+}
+```
+
+테스트 케이스 생성.
+
+```java
+// Board.java
+
+package racingcar.entity;
+
+import static racingcar.entity.BoardConstants.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public class Board {
+    private final Map<Integer, List<String>> record = new HashMap<>();
+
+    private int round = 0;
+
+    public String displayCar(Car car) throws IllegalArgumentException {
+        this.validateCar(car);
+        String distSign = this.getDistSign(car.getPosition());
+        return String.format(CAR_DISPLAY_FORMAT, car.getName(), distSign);
+    }
+
+    private String getDistSign(int position) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < position; i++) {
+            builder.append(DIST_SIGN);
+        }
+        return builder.toString();
+    }
+
+    private void validateCar(Car car) throws IllegalArgumentException {
+        if (car == null) {
+            throw new IllegalArgumentException(EMPTY_CAR_MESSAGE);
+        }
+    }
+}
+```
+
+자동차 표시시 유효성 체크.
+
+### 라운드 우승자 갱신시 자동차 목록이 미존재할 경우
+
+```java
+// BoardTest.java
+
+package racingcar.entity;
+
+import static org.assertj.core.api.Assertions.*;
+import static racingcar.entity.BoardConstants.*;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+
+public class BoardTest {
+    @Test
+    void 라운드_우승자_갱신시_자동차_목록_미존재() {
+        Board board = new Board();
+        assertThatThrownBy(() -> board.update(null)).isInstanceOf(IllegalArgumentException.class)
+            .hasMessage(EMPTY_CAR_LIST_MESSAGE);
+    }
+}
+```
+
+테스트 케이스 생성.
+
+```java
+// Board.java
+
+package racingcar.entity;
+
+import static racingcar.entity.BoardConstants.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public class Board {
+    private final Map<Integer, List<String>> record = new HashMap<>();
+
+    private int round = 0;
+
+    public void update(List<Car> carList) throws IllegalArgumentException {
+        this.validateCarList(carList);
+        int maxDist = carList.stream().mapToInt(Car::getPosition).max().getAsInt();
+        List<String> winnerList = carList.stream()
+            .filter((car) -> maxDist == car.getPosition())
+            .map(Car::getName)
+            .collect(Collectors.toList());
+        this.round++;
+        this.record.put(this.round, winnerList);
+    }
+
+    private void validateCarList(List<Car> carList) throws IllegalArgumentException {
+        if (carList == null) {
+            throw new IllegalArgumentException(EMPTY_CAR_LIST_MESSAGE);
+        }
+    }
+}
+```
+
+라운드 우승자 갱신시 자동차 목록 유효성 체크.
+
+### 미진행된 라운드 우승자를 반환할 경우
+
+```java
+// BoardTest.java
+
+package racingcar.entity;
+
+import static org.assertj.core.api.Assertions.*;
+import static racingcar.entity.BoardConstants.*;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+
+public class BoardTest {
+    @Test
+    void 라운드_미진행된_우승자_출력() {
+        Board board = new Board();
+        assertThatThrownBy(() -> board.displayWinner(1)).isInstanceOf(IllegalArgumentException.class)
+            .hasMessage(NOT_PROGRESS_ROUND_MESSAGE);
+    }
+}
+```
+
+테스트 케이스 생성.
+
+```java
+// Board.java
+
+package racingcar.entity;
+
+import static racingcar.entity.BoardConstants.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public class Board {
+    private final Map<Integer, List<String>> record = new HashMap<>();
+
+    private int round = 0;
+
+    public String displayWinner(int round) throws IllegalArgumentException {
+        this.validateRound(round);
+        return String.join(WINNER_SEPARATOR, this.record.get(round));
+    }
+
+    private void validateRound(int round) throws IllegalArgumentException {
+        if (this.record.get(round) == null) {
+            throw new IllegalArgumentException(NOT_PROGRESS_ROUND_MESSAGE);
+        }
+    }
+}
+```
+
+우승자 반환 전 라운드 유효성 체크.
