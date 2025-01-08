@@ -12,7 +12,8 @@ public class Board {
 
     private int round = 0;
 
-    public String displayCar(Car car) {
+    public String displayCar(Car car) throws IllegalArgumentException {
+        this.validateCar(car);
         String distSign = this.getDistSign(car.getPosition());
         return String.format(CAR_DISPLAY_FORMAT, car.getName(), distSign);
     }
@@ -25,7 +26,14 @@ public class Board {
         return builder.toString();
     }
 
-    public void update(List<Car> carList) {
+    private void validateCar(Car car) throws IllegalArgumentException {
+        if (car == null) {
+            throw new IllegalArgumentException(EMPTY_CAR_MESSAGE);
+        }
+    }
+
+    public void update(List<Car> carList) throws IllegalArgumentException {
+        this.validateCarList(carList);
         int maxDist = carList.stream().mapToInt(Car::getPosition).max().getAsInt();
         List<String> winnerList = carList.stream()
             .filter((car) -> maxDist == car.getPosition())
@@ -35,7 +43,20 @@ public class Board {
         this.record.put(this.round, winnerList);
     }
 
-    public String displayWinner(int round) {
+    private void validateCarList(List<Car> carList) throws IllegalArgumentException {
+        if (carList == null) {
+            throw new IllegalArgumentException(EMPTY_CAR_LIST_MESSAGE);
+        }
+    }
+
+    public String displayWinner(int round) throws IllegalArgumentException {
+        this.validateRound(round);
         return String.join(WINNER_SEPARATOR, this.record.get(round));
+    }
+
+    private void validateRound(int round) throws IllegalArgumentException {
+        if (this.record.get(round) == null) {
+            throw new IllegalArgumentException(NOT_PROGRESS_ROUND_MESSAGE);
+        }
     }
 }

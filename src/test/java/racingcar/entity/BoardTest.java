@@ -29,4 +29,25 @@ public class BoardTest {
         board.update(carList);
         assertThat(board.displayWinner(1)).isEqualTo(result);
     }
+
+    @Test
+    void 자동차_표시시_미존재() {
+        Board board = new Board();
+        assertThatThrownBy(() -> board.displayCar(null)).isInstanceOf(IllegalArgumentException.class)
+            .hasMessage(EMPTY_CAR_MESSAGE);
+    }
+
+    @Test
+    void 라운드_우승자_갱신시_자동차_목록_미존재() {
+        Board board = new Board();
+        assertThatThrownBy(() -> board.update(null)).isInstanceOf(IllegalArgumentException.class)
+            .hasMessage(EMPTY_CAR_LIST_MESSAGE);
+    }
+
+    @Test
+    void 라운드_미진행된_우승자_출력() {
+        Board board = new Board();
+        assertThatThrownBy(() -> board.displayWinner(1)).isInstanceOf(IllegalArgumentException.class)
+            .hasMessage(NOT_PROGRESS_ROUND_MESSAGE);
+    }
 }
