@@ -392,3 +392,84 @@ public class Board {
 ```
 
 Car 표시 구현.
+
+## 5. 라운드별 우승자 저장 및 반환
+
+```java
+// BoardConstants.java
+
+package racingcar.entity;
+
+public final class BoardConstants {
+    private BoardConstants() {
+    }
+
+    public static final String WINNER_SEPARATOR = ",";
+}
+```
+
+우승자 반환 관련 상수 정의.
+
+```java
+// BoardTest.java
+
+package racingcar.entity;
+
+import static org.assertj.core.api.Assertions.*;
+import static racingcar.entity.BoardConstants.*;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+
+public class BoardTest {
+    @Test
+    void 라운드별_우승자_저장_및_반환() {
+        String name1 = "test1", name2 = "test2";
+        String result = String.format("%s%s%s", name1, WINNER_SEPARATOR, name2);
+        Board board = new Board();
+        List<Car> carList = Arrays.asList(new Car(name1), new Car(name2));
+        board.update(carList);
+        assertThat(board.displayWinner(1)).isEqualTo(result);
+    }
+}
+```
+
+테스트 케이스 생성.
+
+```java
+// Board.java
+
+package racingcar.entity;
+
+import static racingcar.entity.BoardConstants.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public class Board {
+    private final Map<Integer, List<String>> record = new HashMap<>();
+
+    private int round = 0;
+    
+    public void update(List<Car> carList) {
+        int maxDist = carList.stream().mapToInt(Car::getPosition).max().getAsInt();
+        List<String> winnerList = carList.stream()
+            .filter((car) -> maxDist == car.getPosition())
+            .map(Car::getName)
+            .collect(Collectors.toList());
+        this.round++;
+        this.record.put(this.round, winnerList);
+    }
+
+    public String displayWinner(int round) {
+        return String.join(WINNER_SEPARATOR, this.record.get(round));
+    }
+}
+```
+
+라운드별 우승자 저장 및 반환 구현.
+
