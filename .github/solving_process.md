@@ -948,3 +948,73 @@ public class Game {
 ```
 
 애플리케이션 실행시 자동차 이름과 시도할 횟수 입력 받도록 구현.
+
+## 10. 사용자 입력 처리 유효성 체크
+
+```java
+// Validation.java
+
+package racingcar.util;
+
+import java.util.regex.Pattern;
+
+public final class Validation {
+    private Validation() {
+    }
+
+    public static boolean isNumeric(String str) {
+        return Pattern.matches("^[0-9]*$", str);
+    }
+}
+```
+
+문자 숫자 형태 체크 기능 생성.
+
+```java
+// GameConstants.java
+
+package racingcar.service;
+
+public final class GameConstants {
+    private GameConstants() {
+    }
+
+    public static final String NOT_NUMERIC_FINAL_ROUND_MESSAGE = "시도 횟수는 숫자여야 한다.";
+}
+```
+
+유효성 관련 상수 정의.
+
+```java
+// Game.java
+
+package racingcar.service;
+
+import static racingcar.service.GameConstants.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import racingcar.entity.Car;
+import racingcar.ui.Input;
+import racingcar.ui.Output;
+import racingcar.util.Validation;
+
+public class Game {
+    private int questInputFinalRound() throws IllegalArgumentException {
+        this.output.println("시도할 회수는 몇회인가요?");
+        String answer = this.input.readline();
+        this.validateFinalRound(answer);
+        return Integer.parseInt(answer);
+    }
+
+    private void validateFinalRound(String _finalRound) throws IllegalArgumentException {
+        if (!Validation.isNumeric(_finalRound)) {
+            throw new IllegalArgumentException(NOT_NUMERIC_FINAL_ROUND_MESSAGE);
+        }
+    }
+}
+```
+
+시도 횟수 입력 처리시 유효성 체크.
