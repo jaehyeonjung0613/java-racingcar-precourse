@@ -40,6 +40,7 @@ public class Game {
         for (int round = 1; round <= finalRound; round++) {
             this.startRacingOfRound(carList, board);
         }
+        this.printFinalRoundWinner(finalRound, board);
     }
 
     private String[] questInputCarName() {
@@ -76,6 +77,10 @@ public class Game {
 
     private int createCarSeed() {
         return Randoms.pickNumberInRange(CarConstants.MIN_OPERATION_SEED, CarConstants.MAX_OPERATION_SEED);
+    }
+
+    private void printFinalRoundWinner(int finalRound, Board board) {
+        this.output.println(String.format("최종 우승자 : %s", board.displayWinner(finalRound)));
     }
 
     public void finish() {
