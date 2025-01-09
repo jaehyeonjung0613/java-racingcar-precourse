@@ -33,14 +33,18 @@ public class Game {
     }
 
     public void run() {
-        Board board = new Board();
-        List<Car> carList = this.createCarList(this.questInputCarName());
-        int finalRound = this.questInputFinalRound();
-        this.output.printNextLine();
-        for (int round = 1; round <= finalRound; round++) {
-            this.startRacingOfRound(carList, board);
+        try {
+            Board board = new Board();
+            List<Car> carList = this.createCarList(this.questInputCarName());
+            int finalRound = this.questInputFinalRound();
+            this.output.printNextLine();
+            for (int round = 1; round <= finalRound; round++) {
+                this.startRacingOfRound(carList, board);
+            }
+            this.printFinalRoundWinner(finalRound, board);
+        } catch (IllegalArgumentException e) {
+            this.output.printError(e.getMessage());
         }
-        this.printFinalRoundWinner(finalRound, board);
     }
 
     private String[] questInputCarName() {
