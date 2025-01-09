@@ -683,3 +683,112 @@ public class Board {
 ```
 
 우승자 반환 전 라운드 유효성 체크.
+
+## 7. 콘솔 입출력
+
+```java
+// Input.java
+
+package racingcar.ui;
+
+public interface Input {
+    String readline();
+}
+```
+
+입력 인터페이스 생성.
+
+```java
+// ConsoleInput.java
+
+package racingcar.ui;
+
+import camp.nextstep.edu.missionutils.Console;
+
+public class ConsoleInput implements Input {
+    @Override
+    public String readline() {
+        return Console.readLine();
+    }
+}
+```
+
+콘솔 입력 구현.
+
+```java
+// Output.java
+
+package racingcar.ui;
+
+public interface Output {
+    void print(String message);
+
+    void println(String message);
+
+    void printNextLine();
+
+    void printByFormat(String format, String message);
+
+    void printError(String message);
+}
+```
+
+출력 인터페이스 생성.
+
+```java
+// OutputConstants.java
+
+package racingcar.ui;
+
+public final class OutputConstants {
+    private OutputConstants() {
+    }
+
+    public static final String ERROR_FORMAT = "[ERROR] %s";
+}
+```
+
+에러 출력 관련 상수 정의.
+
+```java
+// ConsoleOutput.java
+
+package racingcar.ui;
+
+import static racingcar.ui.OutputConstants.*;
+
+import java.io.PrintStream;
+
+public class ConsoleOutput implements Output {
+    private final PrintStream console = System.out;
+
+    @Override
+    public void print(String message) {
+        console.print(message);
+    }
+
+    @Override
+    public void println(String message) {
+        console.println(message);
+    }
+
+    @Override
+    public void printNextLine() {
+        console.println();
+    }
+
+    @Override
+    public void printByFormat(String format, String message) {
+        this.println(String.format(format, message));
+    }
+
+    @Override
+    public void printError(String message) {
+        this.printByFormat(ERROR_FORMAT, message);
+    }
+}
+```
+
+콘솔 출력 구현.
+
+
