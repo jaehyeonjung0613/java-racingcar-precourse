@@ -404,7 +404,7 @@ public final class BoardConstants {
     private BoardConstants() {
     }
 
-    public static final String WINNER_SEPARATOR = ",";
+    public static final String WINNER_SEPARATOR = ", ";
 }
 ```
 
