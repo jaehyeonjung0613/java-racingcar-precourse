@@ -1018,3 +1018,52 @@ public class Game {
 ```
 
 시도 횟수 입력 처리시 유효성 체크.
+
+## 11. 자동차 경주
+
+```java
+// Game.java
+
+package racingcar.service;
+
+import static racingcar.service.GameConstants.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import camp.nextstep.edu.missionutils.Randoms;
+import racingcar.entity.Board;
+import racingcar.entity.Car;
+import racingcar.entity.CarConstants;
+import racingcar.ui.Input;
+import racingcar.ui.Output;
+import racingcar.util.Validation;
+
+public class Game {
+    public void run() {
+        Board board = new Board();
+        List<Car> carList = this.createCarList(this.questInputCarName());
+        int finalRound = this.questInputFinalRound();
+        this.output.printNextLine();
+        for (int round = 1; round <= finalRound; round++) {
+            this.startRacingOfRound(carList, board);
+        }
+    }
+    
+    private void startRacingOfRound(List<Car> carList, Board board) {
+        for (Car car : carList) {
+            car.operate(this.createCarSeed());
+            this.output.println(board.displayCar(car));
+        }
+        this.output.printNextLine();
+        board.update(carList);
+    }
+
+    private int createCarSeed() {
+        return Randoms.pickNumberInRange(CarConstants.MIN_OPERATION_SEED, CarConstants.MAX_OPERATION_SEED);
+    }
+}
+```
+
+애플리케이션 실행시 라운드별 자동차 경주 구현.
