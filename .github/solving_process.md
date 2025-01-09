@@ -1108,3 +1108,44 @@ public class Game {
 ```
 
 애플리케이션 실행시 자동차 경주 최종 우승자 출력 구현.
+
+## 13. 예외 상황 에러 문구 출력
+
+```java
+// Game.java
+
+package racingcar.service;
+
+import static racingcar.service.GameConstants.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import camp.nextstep.edu.missionutils.Randoms;
+import racingcar.entity.Board;
+import racingcar.entity.Car;
+import racingcar.entity.CarConstants;
+import racingcar.ui.Input;
+import racingcar.ui.Output;
+import racingcar.util.Validation;
+
+public class Game {
+    public void run() {
+        try {
+            Board board = new Board();
+            List<Car> carList = this.createCarList(this.questInputCarName());
+            int finalRound = this.questInputFinalRound();
+            this.output.printNextLine();
+            for (int round = 1; round <= finalRound; round++) {
+                this.startRacingOfRound(carList, board);
+            }
+            this.printFinalRoundWinner(finalRound, board);
+        } catch (IllegalArgumentException e) {
+            this.output.printError(e.getMessage());
+        }
+    }
+}
+```
+
+애플리케이션 실행시 예외 발생하면 에러 문구 출력 구현.
