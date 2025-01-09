@@ -1,7 +1,15 @@
 package racingcar;
 
+import racingcar.service.Game;
+import racingcar.service.GameManager;
+
 public class Application {
     public static void main(String[] args) {
-        // TODO 구현 진행
+        Game game = new GameManager().build();
+        try {
+            game.run();
+        } finally {
+            game.finish();
+        }
     }
 }
