@@ -6,7 +6,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import camp.nextstep.edu.missionutils.Randoms;
+import racingcar.entity.Board;
 import racingcar.entity.Car;
+import racingcar.entity.CarConstants;
 import racingcar.ui.Input;
 import racingcar.ui.Output;
 import racingcar.util.Validation;
@@ -30,8 +33,13 @@ public class Game {
     }
 
     public void run() {
+        Board board = new Board();
         List<Car> carList = this.createCarList(this.questInputCarName());
         int finalRound = this.questInputFinalRound();
+        this.output.printNextLine();
+        for (int round = 1; round <= finalRound; round++) {
+            this.startRacingOfRound(carList, board);
+        }
     }
 
     private String[] questInputCarName() {
@@ -55,6 +63,19 @@ public class Game {
         if (!Validation.isNumeric(_finalRound)) {
             throw new IllegalArgumentException(NOT_NUMERIC_FINAL_ROUND_MESSAGE);
         }
+    }
+
+    private void startRacingOfRound(List<Car> carList, Board board) {
+        for (Car car : carList) {
+            car.operate(this.createCarSeed());
+            this.output.println(board.displayCar(car));
+        }
+        this.output.printNextLine();
+        board.update(carList);
+    }
+
+    private int createCarSeed() {
+        return Randoms.pickNumberInRange(CarConstants.MIN_OPERATION_SEED, CarConstants.MAX_OPERATION_SEED);
     }
 
     public void finish() {
