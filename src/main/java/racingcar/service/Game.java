@@ -6,11 +6,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.swing.*;
-
 import racingcar.entity.Car;
 import racingcar.ui.Input;
 import racingcar.ui.Output;
+import racingcar.util.Validation;
 
 public class Game {
     private static Game instance = null;
@@ -45,10 +44,17 @@ public class Game {
         return Arrays.stream(carNames).map(Car::new).collect(Collectors.toList());
     }
 
-    private int questInputFinalRound() {
+    private int questInputFinalRound() throws IllegalArgumentException {
         this.output.println("시도할 회수는 몇회인가요?");
         String answer = this.input.readline();
+        this.validateFinalRound(answer);
         return Integer.parseInt(answer);
+    }
+
+    private void validateFinalRound(String _finalRound) throws IllegalArgumentException {
+        if (!Validation.isNumeric(_finalRound)) {
+            throw new IllegalArgumentException(NOT_NUMERIC_FINAL_ROUND_MESSAGE);
+        }
     }
 
     public void finish() {
