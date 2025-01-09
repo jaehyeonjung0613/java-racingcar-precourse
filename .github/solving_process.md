@@ -791,4 +791,101 @@ public class ConsoleOutput implements Output {
 
 콘솔 출력 구현.
 
+## 8. 애플리케이션 Skeleton
+
+```java
+// Game.java
+
+package racingcar.service;
+
+import racingcar.ui.Input;
+import racingcar.ui.Output;
+
+public class Game {
+    private static Game instance = null;
+
+    private final Input input;
+    private final Output output;
+
+    private Game(Input input, Output output) {
+        this.input = input;
+        this.output = output;
+    }
+
+    protected static Game getInstance(Input input, Output output) {
+        if (instance == null) {
+            instance = new Game(input, output);
+        }
+        return instance;
+    }
+
+    public void run() {
+    }
+
+    public void finish() {
+        instance = null;
+    }
+}
+```
+
+애플리케이션 런처 동작 및 종료 구성.
+
+```java
+// GameManager.java
+
+package racingcar.service;
+
+import racingcar.ui.ConsoleInput;
+import racingcar.ui.ConsoleOutput;
+import racingcar.ui.Input;
+import racingcar.ui.Output;
+
+public class GameManager {
+    private Input input;
+    private Output output;
+
+    public GameManager() {
+        input = new ConsoleInput();
+        output = new ConsoleOutput();
+    }
+
+    public GameManager input(Input input) {
+        this.input = input;
+        return this;
+    }
+
+    public GameManager output(Output output) {
+        this.output = output;
+        return this;
+    }
+
+    public Game build() {
+        return Game.getInstance(input, output);
+    }
+}
+```
+
+애플리케이션 런처 매니저 생성.
+
+```java
+// Application.java
+
+package racingcar;
+
+import racingcar.service.Game;
+import racingcar.service.GameManager;
+
+public class Application {
+    public static void main(String[] args) {
+        Game game = new GameManager().build();
+        try {
+            game.run();
+        } finally {
+            game.finish();
+        }
+    }
+}
+```
+
+애플리케이션 실행 및 종료.
 
